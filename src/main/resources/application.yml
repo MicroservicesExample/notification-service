@@ -1,0 +1,25 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: notification-service
+  cloud:
+    function:
+      definition: sms|email # will compose these two functions as one function
+    stream:
+       #bindings will bind the function input out to the destination (exchange in rabbitmq), it will create queue as <destination>.<group> 
+       #if it does not exist
+      bindings:
+        smsemail-in-0: #Input binding: <functionName> + -in- + <index> ( unless you use partitions index will be 0)
+          #destination is an exchange in rabbitmq 
+          destination: notify-user
+          group: ${spring.application.name}
+        smsemail-out-0: #Output binding: <functionName> + -out- + <index> ( unless you use partitions index will be 0)
+          destination: notification-success
+             
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbit
+    password: rabbit
+    connection-timeout: 5s
