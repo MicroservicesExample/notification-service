@@ -1,9 +1,27 @@
 server:
   port: 9000
+  shutdown: graceful
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
 spring:
   application:
     name: notification-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  config:
+    import: "optional:configserver:"
   cloud:
+    config:
+      uri: "http://localhost:9001"
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: false
+      retry:
+        max-attempts: 5
+        initial-interval: 1000
+        max-interval: 2000
+        multiplier: 1.1
     function:
       definition: sms|email # will compose these two functions as one function
     stream:
@@ -17,9 +35,14 @@ spring:
         smsemail-out-0: #Output binding: <functionName> + -out- + <index> ( unless you use partitions index will be 0)
           destination: notification-success
              
-  rabbitmq:
+rabbitmq:
     host: localhost
     port: 5672
     username: rabbit
     password: rabbit
     connection-timeout: 5s
+
+# Enable refresh endpoint of the actuator, exposes HTTP /actuator/refresh endpoint
+management:
+  endpoints:
+    web.exposure.include: refresh
