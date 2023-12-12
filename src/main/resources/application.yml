@@ -35,7 +35,7 @@ spring:
         smsemail-out-0: #Output binding: <functionName> + -out- + <index> ( unless you use partitions index will be 0)
           destination: notification-success
              
-rabbitmq:
+  rabbitmq:
     host: localhost
     port: 5672
     username: rabbit
